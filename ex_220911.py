@@ -1,5 +1,17 @@
+import datetime
+import os.path
+
 import matplotlib.pyplot as plt
 import numpy as np
+
+DIR_PLOT_SAVE = "plot"
+
+def make_dir_if_not_existed(dir_name):
+    if os.path.exists(dir_name) is False:
+        os.mkdir(dir_name)
+
+make_dir_if_not_existed(DIR_PLOT_SAVE)
+
 
 CB91_Blue = '#2CBDFE'
 CB91_Green = '#47DBCD'
@@ -33,6 +45,11 @@ plt.rcParams['ytick.labelcolor'] = 'lightgray'
 plt.rcParams['legend.labelcolor'] = 'white'
 plt.rcParams['grid.color'] = 'darkgray'
 
+
+font_cc = {'family': 'JetBrains Mono',
+      'color':  'green',
+      'weight': 'normal',
+      'size': 16}
 
 # plt.style.use('_mpl-gallery')
 
@@ -189,7 +206,7 @@ data_dict = {
 }
 
 
-def show_graph(graph_dict, fig_width=19.2, fig_height=10.8):
+def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, fig_height=10.8):
 
     row_num = graph_dict['row_num']
     col_num = graph_dict['col_num']
@@ -241,8 +258,16 @@ def show_graph(graph_dict, fig_width=19.2, fig_height=10.8):
                 #        ylim=(0, 8), yticks=np.arange(1, 8))
 
     # plt.legend(frameon=False)
-
+    plt.figtext(0.9, 0.005, 'Copyright', fontdict=font_cc)
     plt.tight_layout()
-    plt.show()
+    if save_fig is True:
+        if today_str is None:
+            today_str = datetime.datetime.today().strftime("%Y%m%d")
+        dir_path = os.path.join(DIR_PLOT_SAVE, f"{today_str}")
+        make_dir_if_not_existed(dir_path)
+        file_path = os.path.join(dir_path, f"{title}.png")
+        plt.savefig(file_path)
+    else:
+        plt.show()
 
-show_graph(graph_dict=data_dict)
+show_graph(graph_dict=data_dict, today_str="20220910", save_fig=False)
