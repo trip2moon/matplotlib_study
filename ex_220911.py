@@ -258,7 +258,7 @@ def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, f
                 #        ylim=(0, 8), yticks=np.arange(1, 8))
 
     # plt.legend(frameon=False)
-    plt.figtext(0.9, 0.005, 'Copyright', fontdict=font_cc)
+    plt.figtext(0.9, 0.005, 'Copyright Here', fontdict=font_cc)
     plt.tight_layout()
     if save_fig is True:
         if today_str is None:
@@ -270,4 +270,4 @@ def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, f
     else:
         plt.show()
 
-show_graph(graph_dict=data_dict, today_str="20220910", save_fig=False)
+show_graph(graph_dict=data_dict, today_str="20220910", save_fig=True)
