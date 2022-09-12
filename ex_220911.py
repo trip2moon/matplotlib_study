@@ -3,15 +3,17 @@ import os.path
 
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.colors as mcolors
 
 DIR_PLOT_SAVE = "plot"
+
 
 def make_dir_if_not_existed(dir_name):
     if os.path.exists(dir_name) is False:
         os.mkdir(dir_name)
 
-make_dir_if_not_existed(DIR_PLOT_SAVE)
 
+make_dir_if_not_existed(DIR_PLOT_SAVE)
 
 CB91_Blue = '#2CBDFE'
 CB91_Green = '#47DBCD'
@@ -45,11 +47,10 @@ plt.rcParams['ytick.labelcolor'] = 'lightgray'
 plt.rcParams['legend.labelcolor'] = 'white'
 plt.rcParams['grid.color'] = 'darkgray'
 
-
 font_cc = {'family': 'JetBrains Mono',
-      'color':  'green',
-      'weight': 'normal',
-      'size': 16}
+           'color': 'green',
+           'weight': 'normal',
+           'size': 16}
 
 # plt.style.use('_mpl-gallery')
 
@@ -70,7 +71,7 @@ x5 = np.linspace(0, 10, 100)
 y5 = 9 + 2 * np.cos(2 * x4)
 
 data_dict = {
-    'title': "TEST GRAPH 1234567890",
+    'title': "TEST GRAPH 1234567890 DATA 1",
     'row_num': 2,
     'col_num': 2,
     'data': {
@@ -206,29 +207,44 @@ data_dict = {
 }
 
 
-def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, fig_height=10.8):
-
+def show_graph(graph_dict, today_str=None, save_fig=False, image_width=1920, image_height=1080):
     row_num = graph_dict['row_num']
     col_num = graph_dict['col_num']
 
-    fig, axes = plt.subplots(nrows=row_num, ncols=col_num, figsize=(fig_width, fig_height), tight_layout=True)
+    fig_width = image_width / 100
+    fig_height = image_height / 100
+    print(f"{fig_width}, {fig_height}")
+
+    fig, axes = plt.subplots(nrows=row_num, ncols=col_num,
+                             figsize=(fig_width, fig_height), tight_layout=False)
+
+    fig.subplots_adjust(left=0.025, bottom=0.075, right=0.975, top=0.925, hspace=0.15, wspace=0.1)
+    # fig.subplots_adjust(top=0.5)
 
     if 'title' in graph_dict:
         title = graph_dict['title']
-        fig.suptitle(title, color='yellow', fontsize=20)
+        fig.suptitle(title.upper(), color='yellow', fontsize=20)
 
     if 'data' in graph_dict:
 
         graph_data = graph_dict['data']
         for row in range(row_num):
             for col in range(col_num):
-                ax = axes[row, col]
+                if row_num == 1 and col_num == 1:
+                    ax = axes
+                elif row_num == 1:
+                    ax = axes[col]
+                elif col_num == 1:
+                    ax = axes[row]
+                else:
+                    ax = axes[row, col]
+
                 plot_loc = f"{row}{col}"
                 plot_dict = graph_data[plot_loc]
 
                 if 'title' in plot_dict:
                     plot_title = plot_dict['title']
-                    ax.set_title(f"{plot_title}", color='white', fontsize=18)
+                    ax.set_title(f"  {plot_title.upper()}", color=mcolors.CSS4_COLORS['cornflowerblue'], fontsize=18, loc='left')
                 if 'label_x' in plot_dict:
                     plot_label_x = plot_dict['label_x']
                     ax.set_xlabel(f"{plot_label_x}", color='white', fontsize=12)
@@ -239,7 +255,6 @@ def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, f
                 ax.tick_params('x', direction='in')
                 ax.tick_params('y', direction='in')
                 # ax.grid(True)
-
 
                 if 'data' in plot_dict:
                     plot_data = plot_dict['data']
@@ -258,16 +273,321 @@ def show_graph(graph_dict, today_str = None, save_fig = False, fig_width=19.2, f
                 #        ylim=(0, 8), yticks=np.arange(1, 8))
 
     # plt.legend(frameon=False)
-    plt.figtext(0.9, 0.005, 'Copyright Here', fontdict=font_cc)
-    plt.tight_layout()
+    if image_width == 1080:
+        plt.figtext(0.8, 0.005, 'Copyright Here', fontdict=font_cc)
+    else:
+        plt.figtext(0.9, 0.005, 'Copyright Here', fontdict=font_cc)
+
+    # plt.tight_layout()
     if save_fig is True:
         if today_str is None:
             today_str = datetime.datetime.today().strftime("%Y%m%d")
         dir_path = os.path.join(DIR_PLOT_SAVE, f"{today_str}")
         make_dir_if_not_existed(dir_path)
-        file_path = os.path.join(dir_path, f"{title}.png")
+        if fig_width == 1920:
+            type_str = "landscape"
+        else:
+            type_str = "portrait"
+        file_path = os.path.join(dir_path, f"{title}_{type_str}.png")
         plt.savefig(file_path)
     else:
         plt.show()
 
-show_graph(graph_dict=data_dict, today_str="20220910", save_fig=True)
+
+show_graph(graph_dict=data_dict, today_str=None, save_fig=True)
+
+data_dict2 = {
+    'title': "TEST GRAPH 1234567890 DATA 2",
+    'row_num': 1,
+    'col_num': 2,
+    'data': {
+        '00': {
+            'title': 'plot title 00',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        },
+        '01': {
+            'title': 'plot title 01',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        }
+    }
+}
+
+show_graph(graph_dict=data_dict2, today_str=None, save_fig=True)
+
+data_dict3 = {
+    'title': "TEST GRAPH 1234567890 DATA 3",
+    'row_num': 2,
+    'col_num': 1,
+    'data': {
+        '00': {
+            'title': 'plot title 00',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        },
+        '10': {
+            'title': 'plot title 10',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        }
+    }
+}
+
+show_graph(graph_dict=data_dict3, today_str=None, save_fig=True)
+
+data_dict4 = {
+    'title': "TEST GRAPH 1234567890 DATA 4",
+    'row_num': 1,
+    'col_num': 2,
+    'data': {
+        '00': {
+            'title': 'plot title 00',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        },
+        '01': {
+            'title': 'plot title 01',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        }
+    }
+}
+
+show_graph(graph_dict=data_dict4, image_width=1080, image_height=1980, today_str=None, save_fig=True)
+
+data_dict5 = {
+    'title': "TEST GRAPH 1234567890 DATA 5",
+    'row_num': 2,
+    'col_num': 1,
+    'data': {
+        '00': {
+            'title': 'plot title 00',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        },
+        '10': {
+            'title': 'plot title 10',
+            'label_x': 'XXXXX',
+            'label_y': 'YYYYY',
+            'data': {
+                'line name 1': {
+                    'x': x1,
+                    'y': y1,
+                    'linewidth': 0.1
+                },
+                'line name 2': {
+                    'x': x2,
+                    'y': y2,
+                    'linewidth': 0.2
+                },
+                'line name 3': {
+                    'x': x3,
+                    'y': y3,
+                    'linewidth': 0.3
+                },
+                'line name 4': {
+                    'x': x4,
+                    'y': y4,
+                    'linewidth': 0.4
+                },
+                'line name 5': {
+                    'x': x5,
+                    'y': y5,
+                    'linewidth': 0.5
+                }
+            }
+        }
+    }
+}
+
+show_graph(graph_dict=data_dict5, image_width=1080, image_height=1980, today_str=None, save_fig=True)
